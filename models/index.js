@@ -11,3 +11,4 @@ placeSchema.methods.showEstablished = function() {
 }
 
 module.exports.Place = require("./places")
+module.exports.Comment = require("./comment")
