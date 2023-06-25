@@ -46,53 +46,36 @@ router.get("/:id", (req, res) => {
 
 // PUT /:id
 router.put("/:id", (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
-        res.render("error404")
-    } else if (!places[id]) {
-        res.render("error404")
-    } else {
-        // Validated req.body data
-            if (!req.body.pic) {
-                req.body.pic = "http://placekitten.com/400/400"
-            }
-            if (!req.body.city){
-                req.body.city = "Anytown"
-            }
-            if (!req.body.state){
-                req.body.state = "USA"
-            }
-    }
-        places[id] = req.body
-        res.send("PUT /places/:id stub")
+    db.Place.findByIdAndUpdate(req.params.id, req.body)
+    .then(() => {
+        res.redirect(`/places/${req.params.id}`)
+    })
+    .catch(err => {
+        console.log("err", err)
+        res.render("error")
+    })
     })
 
 // DELETE /:id
 router.delete("/:id", (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
+    db.Place.findByIdAndDelete(req.params.id)
+    .then(place => { res.redirect("/places")
+    })
+    .catch(err => {
+        console.log("err", err)
         res.render("error404")
-    }
-    else if (!places[id]){
-        res.render("error404")
-    }
-    else {
-        places.splice(id, 1)
-        res.send("DELETE /places/:id stub")
-    }
+    })
 })
 
 // GET /:id/edit
 router.get("/:id/edit", (req, res) => {
-    let id = Number(req.params.id)
-    if (isNaN(id)) {
+    db.Place.findById(req.params.id)
+    .then(place => {
+        res.render("places/edit", {places})
+    })
+    .catch(err => {
         res.render("error404")
-    }
-    else if (!places[id]){
-        res.render("error404")
-    } else {
-    res.render("GET edit form stub")
-    }
+    })
 })
 
 // POST /:id/comment
